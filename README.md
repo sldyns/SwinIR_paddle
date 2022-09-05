@@ -70,6 +70,7 @@ SwinIR_Paddle
     |-- main_train_psnr.py         # 模型训练代码
     |-- main_train_tipc.py         # TICP训练代码
     |-- README.md                  # README.md文件
+    |-- train.log                  # 训练日志
 ```
 
 ## 4. 环境依赖
