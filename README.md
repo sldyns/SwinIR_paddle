@@ -18,7 +18,7 @@ SwinIR的结构比较简单，如果看过Swin-Transformer的话就没什么难�
 
 在 CBSD68 测试集上测试，达到验收最低标准34.32：
 
-| DnCNN-B | Noise Level15 |
+| SwinIR  | Noise Level15 |
 | ------- | ------------- |
 | Pytorch | 34.42         |
 | Paddle  | 34.33         |
