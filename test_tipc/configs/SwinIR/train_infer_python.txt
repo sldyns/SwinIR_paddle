@@ -1,0 +1,32 @@
+===========================train_params===========================
+model_name:SwinIR
+python:python
+gpu_list:0
+use-gpu:True
+--iter:lite_train_lite_infer=4|whole_train_whole_infer=400000
+--log_dir:./output/
+--batchSize:lite_train_lite_infer=1|whole_train_whole_infer=4
+--pretrained:null
+train_model_name:model_best.pdparams
+--data-path:./test_tipc/data/CBSD68
+##
+trainer:norm_train
+norm_train:main_train_tipc.py --opt ./options/train_swinir_tipc.json
+##
+===========================eval_params===========================
+eval:main_test_swinir.py --folder_gt ./test_tipc/data/CBSD68/val_mini --model_path ./test_tipc/output/swinir_denoising_color_15/ models/110_G.pdparams --tile 136
+##
+===========================infer_params===========================
+--save-inference-dir:./test_tipc/output/swinir_denoising
+--pretrained:null
+norm_export:export_model.py --model_path ./test_tipc/output/swinir_denoising_color_15/models/110_G.pdparams
+##
+train_model:./test_tipc/output/swinir_denoising_color_15/models/110_G.pdparams
+infer_export:export_model.py --model_path ./test_tipc/output/swinir_denoising_color_15/models/110_G.pdparams
+##
+inference:infer.py
+--use-gpu:True
+--batch-size:1
+--model-dir:./test_tipc/output/swinir_denoising/
+--folder_gt:./test_tipc/data/CBSD68/val_mini
+--benchmark:False
