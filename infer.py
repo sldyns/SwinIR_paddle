@@ -43,7 +43,7 @@ def get_args(add_help=True):
     parser.add_argument(
         "--model-dir", default=None, help="inference model dir")
     parser.add_argument(
-        "--use-gpu", default=True, type=str2bool, help="use_gpu")
+        "--use-gpu", default=False, type=str2bool, help="use_gpu")
     parser.add_argument("--batch-size", default=1, type=int, help="batch size")
     parser.add_argument(
         "--benchmark", default=False, type=str2bool, help="benchmark")
@@ -87,7 +87,7 @@ class InferenceEngine(object):
         args = self.args
         config = inference.Config(model_file_path, params_file_path)
         if args.use_gpu:
-            config.enable_use_gpu(10000, 0)
+            config.enable_use_gpu(1000, 0)
         else:
             config.disable_gpu()
 
@@ -146,7 +146,7 @@ class InferenceEngine(object):
 
         return psnr, ssim
 
-    def run(self, img_lq, window_size = 8, tile = 136, tile_overlap = 16):
+    def run(self, img_lq, window_size = 8, tile = 136, tile_overlap = 32):
         """run
         Inference process using inference engine.
         Args:
@@ -156,8 +156,8 @@ class InferenceEngine(object):
         _, _, h_old, w_old = img_lq.shape
         h_pad = (h_old // window_size + 1) * window_size - h_old
         w_pad = (w_old // window_size + 1) * window_size - w_old
-        img_lq = np.concatenate((img_lq, np.flip(img_lq, 2)), axis=2)[:, :, :h_old + h_pad, :]
-        img_lq =np.concatenate((img_lq, np.flip(img_lq, 3)), 3)[:, :, :, :w_old + w_pad]
+        img_lq = np.concatenate((img_lq, np.flip(img_lq, [2])), axis=2)[:, :, :h_old + h_pad, :]
+        img_lq = np.concatenate((img_lq, np.flip(img_lq, [3])), axis=3)[:, :, :, :w_old + w_pad]
         img_lq = img_lq.astype(np.float32)
 
         b,c, h, w = img_lq.shape
@@ -181,7 +181,7 @@ class InferenceEngine(object):
                 E[..., h_idx*sf:(h_idx+tile)*sf, w_idx*sf:(w_idx+tile)*sf] += out_patch
                 W[..., h_idx*sf:(h_idx+tile)*sf, w_idx*sf:(w_idx+tile)*sf] += out_patch_mask
 
-        output = np.true_divide(E, W)
+        output = E / W
         output = output[..., :h_old * sf, :w_old * sf]
 
         return output

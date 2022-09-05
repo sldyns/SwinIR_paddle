@@ -272,11 +272,12 @@ def test(img_lq, model, args, window_size):
         for h_idx in h_idx_list:
             for w_idx in w_idx_list:
                 in_patch = img_lq[..., h_idx:h_idx+tile, w_idx:w_idx+tile]
+                print(in_patch)
                 out_patch = model(in_patch)
                 out_patch_mask = paddle.ones_like(out_patch)
 
-                E[..., h_idx*sf:(h_idx+tile)*sf, w_idx*sf:(w_idx+tile)*sf].add(out_patch)
-                W[..., h_idx*sf:(h_idx+tile)*sf, w_idx*sf:(w_idx+tile)*sf].add(out_patch_mask)
+                E[..., h_idx*sf:(h_idx+tile)*sf, w_idx*sf:(w_idx+tile)*sf] += out_patch
+                W[..., h_idx*sf:(h_idx+tile)*sf, w_idx*sf:(w_idx+tile)*sf] += out_patch_mask
         output = E.divide(W)
 
     return output
