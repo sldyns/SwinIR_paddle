@@ -272,7 +272,7 @@ def test(img_lq, model, args, window_size):
         for h_idx in h_idx_list:
             for w_idx in w_idx_list:
                 in_patch = img_lq[..., h_idx:h_idx+tile, w_idx:w_idx+tile]
-                print(in_patch)
+                # print(in_patch)
                 out_patch = model(in_patch)
                 out_patch_mask = paddle.ones_like(out_patch)
 
